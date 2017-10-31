@@ -20,7 +20,7 @@ const schema = makeExecutableSchema({
   resolvers
 })
 
-const PORT = 8081 ;
+const PORT = 8082 ;
 const  app = express();
 
 const graphqlEndpoint = '/graphql'
@@ -29,7 +29,13 @@ app.use(
   graphqlEndpoint,
   bodyParser.json(),
   graphqlExpress({
-    schema: schema, context: {models}
+    schema: schema,
+    context: {
+      models, //all models available in graph context
+      user:{ //temp, passing an id for test
+        id:1
+      }
+    }
   })
 );
 
@@ -39,6 +45,6 @@ app.use('/graphiql', graphiqlExpress({ endpointURL: graphqlEndpoint}));
 /*it will start database */
 //{force:true} param will drop and re-run the migration
 models.sequelize.sync().then( () => {
-  app.listen(PORT);
+  app.listen(PORT)
 })
 
